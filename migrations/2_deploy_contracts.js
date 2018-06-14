@@ -1,14 +1,14 @@
-const BuzzDistributionContract = artifacts.require("BuzzDistribution");
+const DistributionContract = artifacts.require("TokenDistribution");
 
 const fs = require("fs");
 const path = require("path");
 
 
 module.exports = async function(deployer) {
-    await deployer.deploy(BuzzDistributionContract);
+    await deployer.deploy(DistributionContract);
 
     const addresses = {
-        buzzDistributionContractAddress: BuzzDistributionContract.address
+        tokenDistributionContractAddress: DistributionContract.address
     };
 
     await fs.writeFile(

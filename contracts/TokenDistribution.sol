@@ -6,7 +6,7 @@ import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
 // Crowd sale token contract
 // (c) by Pragmatic DLT
-contract BuzzDistribution is ERC20, Ownable {
+contract TokenDistribution is ERC20, Ownable {
     using SafeMath for uint;
 
     string public  name;
@@ -25,8 +25,8 @@ contract BuzzDistribution is ERC20, Ownable {
     mapping(address => mapping(address => uint)) approved;
 
     constructor() public {
-        symbol = "BUZZ";
-        name = "Dropchain";
+        symbol = "TST";
+        name = "Test token";
         decimals = 18;
         bonusEnds = now + 1 weeks;
         endDate = now + 7 weeks;
@@ -64,7 +64,7 @@ contract BuzzDistribution is ERC20, Ownable {
     }
 
     // Transfers _value amount of tokens to address _to, and fires the Transfer event.
-    // If the _from account balance does not have enough tokens to spend throw.
+    // If the _from account balance does not have enough tokens to spend - revert.
     // Transfers of 0 values are treated as normal transfers and the Transfer event is fired.
     function transfer(address _to, uint _value) public returns (bool) {
         require(balances[msg.sender] >= _value);
@@ -84,6 +84,7 @@ contract BuzzDistribution is ERC20, Ownable {
         balances[_from] = balances[_from].sub(_value);
         approved[_from][msg.sender] = approved[_from][msg.sender].sub(_value);
         balances[_to] = balances[_to].add(_value);
+
         emit Transfer(_from, _to, _value);
         return true;
     }
@@ -98,6 +99,8 @@ contract BuzzDistribution is ERC20, Ownable {
 
     function () public payable {
         require(now >= startDate && now <= endDate);
+        require(msg.value >= 1 finney);
+
         uint tokens;
         if (now <= bonusEnds) {
             tokens = msg.value.mul(exchangeRate).div(1 ether);
@@ -107,6 +110,7 @@ contract BuzzDistribution is ERC20, Ownable {
 
         balances[msg.sender] = balances[msg.sender].add(tokens);
         totalSupply = totalSupply.add(tokens);
+
         emit Transfer(address(0), msg.sender, tokens);
         owner.transfer(msg.value);
     }
